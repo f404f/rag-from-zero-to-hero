@@ -23,10 +23,9 @@ for i, doc in enumerate(split_docs):
     print(f"----文档：{i + 1}----")
     print(doc.page_content)
 
-
-
 # 导入向量化模型模块
 from sentence_transformers import SentenceTransformer
+
 # 初始化bge-small-zh模型（轻量中文模型，本地可跑，无需联网调用API）
 # 第一次运行会自动下载模型（约300MB，国内网络可正常下载，若慢可改用清华源镜像）
 embedding_model = SentenceTransformer('BAAI/bge-small-zh')
@@ -40,9 +39,9 @@ print("\n文本向量化成功，向量数量：", len(doc_embeddings))
 print("每个向量维度：", len(doc_embeddings[0]))  # 输出512，即为成功
 print("第一个文档片段的向量（前10位）：", doc_embeddings[0][:10])
 
-
 # 导入Milvus相关模块（Day1已安装pymilvus）
 from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType, utility
+
 # 4. 连接Milvus向量数据库（衔接Day2的部署，参数和Day2验证时一致）
 connections.connect(
     alias="default",
@@ -79,8 +78,8 @@ collection.insert(milvus_data)
 # 8. 创建索引（关键：后续检索需要索引，否则检索速度极慢）
 index_params = {
     "index_type": "IVF_FLAT",  # 基础索引类型，新手首选，简单易操作
-    "metric_type": "L2",       # 距离度量方式，L2为欧氏距离（适合向量匹配）
-    "params": {"nlist": 128}   # 索引参数，默认128即可
+    "metric_type": "L2",  # 距离度量方式，L2为欧氏距离（适合向量匹配）
+    "params": {"nlist": 128}  # 索引参数，默认128即可
 }
 # 为向量字段创建索引
 collection.create_index(field_name="doc_embedding", index_params=index_params)
@@ -92,3 +91,15 @@ print("Milvus集合名称：", collection_name)
 print("存入的向量数量：", collection.num_entities)  # 和文档片段数、向量数量一致，即为成功
 # 关闭Milvus连接（可选，后续开发可保持连接）
 # connections.disconnect("default")
+
+# 从Milvus中查询前3条数据（验证存入的数据正确）
+query_result = collection.query(expr="id > 0",  # 查询条件：id大于0（所有数据）
+                                limit=3,  # 查询3条
+                                output_fields=["id", "doc_text", "doc_embedding"]  # 输出的字段
+                                )
+# 打印查询结果
+print("\n从Milvus查询到的数据：")
+for res in query_result:
+    print(f"id: {res['id']}")
+    print(f"文档文本: {res['doc_text']}")
+    print(f"向量（前10位）: {res['doc_embedding'][:10]}\n")
