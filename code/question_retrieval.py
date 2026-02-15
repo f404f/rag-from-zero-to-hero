@@ -81,3 +81,53 @@ for i, result in enumerate(results[0]):
     doc_text = result.entity.get("doc_text")
     print(f"\n第{i+1}个匹配片段（距离：{distance:.4f}）：")
     print(f"文档内容：{doc_text}")
+
+
+# 11. 结果优化：过滤匹配度过低的片段，只保留有效结果
+# 设定匹配度阈值（L2距离≤0.5，可根据实际情况调整）
+threshold = 0.6
+optimized_results = []
+
+for result in results[0]:
+    distance = result.distance
+    doc_text = result.entity.get("doc_text")
+    # 过滤距离大于阈值的片段（匹配度太低，无效）
+    if distance <= threshold:
+        optimized_results.append({
+            "匹配度": round(distance, 4),
+            "文档片段": doc_text
+        })
+
+# 12. 打印优化后的结果（后续接入大模型，直接使用这个优化后的列表即可）
+print(f"\n优化后的检索结果（匹配度阈值≤{threshold}）：")
+if optimized_results:
+    for i, res in enumerate(optimized_results, 1):
+        print(f"\n第{i}个有效片段：")
+        print(f"匹配度：{res['匹配度']}")
+        print(f"文档片段：{res['文档片段']}")
+else:
+    print(f"未检索到有效结果，请调整匹配度阈值或修改用户问题（贴合文档内容）。")
+
+# 13. 批量检索（可选，测试多个用户问题）
+print(f"\n=== 批量检索测试 ===")
+for question in user_questions:
+    q_embedding = embedding_model.encode(question)
+    q_results = collection.search(
+        data=[q_embedding],
+        anns_field="doc_embedding",
+        limit=2,
+        param=search_params,
+        output_fields=["doc_text"]
+    )
+    # 过滤无效结果
+    q_optimized = [{"匹配度": round(r.distance,4), "文档片段": r.entity.get("doc_text")}
+                   for r in q_results[0] if r.distance <= threshold]
+    print(f"\n用户问题：{question}")
+    if q_optimized:
+        for i, res in enumerate(q_optimized, 1):
+            print(f"  第{i}个有效片段：匹配度{res['匹配度']}，内容：{res['文档片段'][:50]}...")
+    else:
+        print(f"  未检索到有效结果")
+
+# 14. 关闭Milvus连接（可选，后续开发可保持连接）
+connections.disconnect("default")
