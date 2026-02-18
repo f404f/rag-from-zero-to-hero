@@ -18,13 +18,14 @@ def retrieve(question, top_k=3):
     results = collection.search(data=[q_emb], anns_field='doc_embedding', limit=top_k, param=search_params,
                                 output_fields=['doc_text'])
     connections.disconnect('default')
-    optimized = [r.entity.get('doc_text') for r in results[0] if r.distance <= 0.6]
-    return optimized
+    optimized_results = [r.entity.get('doc_text') for r in results[0] if r.distance <= 0.6]
+    return optimized_results
 
 
 def generate_answer_local(question, contexts):
     model = OllamaLLM(base_url="http://localhost:11434",
                       model="qwen3:4b",
+                      temperature=0.0,
                       callbacks=[CustomStreamingHandler()])
 
     prompt = build_prompt_template()
