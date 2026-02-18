@@ -1,15 +1,7 @@
-import sys
-
-from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama.llms import OllamaLLM
 
-
-class CustomStreamingHandler(BaseCallbackHandler):
-    def on_llm_new_token(self, token, **kwargs):
-        sys.stdout.write(token)
-        sys.stdout.flush()
-
+from mfj_langchain.custom_streaming_handler import CustomStreamingHandler
 
 template = """"你是一个专业的技术文档助手。参考下面的上下文片段回答问题，回答要简明扼要。\n\n
 上下文片段：\n{ctx_text}\n\n
