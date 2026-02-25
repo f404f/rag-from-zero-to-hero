@@ -1,0 +1,18 @@
+# 核心框架
+langchain==1.2.9                     # LangChain 主包
+langchain-core==1.2.9                # 核心抽象与接口
+langchain-community==0.3.31          # 第三方集成（文档加载器、向量存储等）
+langchain-text-splitters==1.1.0      # 文本分割器
+
+# LLM 与嵌入（根据实际使用的模型选择）
+pymilvus==2.6.9
+langchain-openai==1.1.8           # OpenAI 模型与嵌入（如使用 OpenAI）
+langchain-ollama==1.0.1           # 本地 Ollama 模型（可选）
+sentence-transformers==5.2.3
+
+# FastAPI 相关
+fastapi==0.129.0
+uvicorn[standard]==0.38.0
+pydantic==2.12.4
+pydantic-settings==2.12.0
+python-multipart==0.0.20
