@@ -1,1 +1,4 @@
 code/.idea/**
+.idea/**
+code/backend/.idea/**
+code/bak/mfj_langchain/__pycache__/**
