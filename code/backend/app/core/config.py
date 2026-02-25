@@ -5,8 +5,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # API基础配置
-    API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "RAG问答系统"
+    API_HOST: str = "localhost"
+    API_PORT: int = 8000
+    API_PATH: str = "/api/v1"
+
+    # uvicorn配置
+    UVICORN_WORKERS: int = 1
+    UVICORN_RELOAD: bool = True
 
     # Milvus数据库配置
     MILVUS_HOST: str = "localhost"
