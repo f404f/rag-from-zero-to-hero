@@ -3,11 +3,11 @@ from app.models.request import ChatRequest
 from app.models.response import ChatResponse
 from app.services.rag_service import RAGService
 
-router = APIRouter(prefix="/chat", tags=["Chat"])
+chat_router = APIRouter(prefix="/chat", tags=["Chat"])
 rag_service = RAGService()
 
 
-@router.post("", response_model=ChatResponse, summary="智能问答")
+@chat_router.post("", response_model=ChatResponse, summary="智能问答")
 async def chat_endpoint(request: ChatRequest):
     """
     基于RAG的智能问答接口
