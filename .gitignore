@@ -2,3 +2,8 @@ code/.idea/**
 .idea/**
 code/backend/.idea/**
 code/bak/mfj_langchain/__pycache__/**
+code/backend/app/__pycache__/**
+code/backend/app/api/routes/__pycache__/**
+code/backend/app/models/__pycache__/**
+code/backend/app/services/__pycache__/**
+code/backend/app/core/__pycache__/**
